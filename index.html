@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div id="menu">
+    <h2>Select Section</h2>
+    <button onclick="startSection('section1')">Section 1</button>
+    <button onclick="startSection('section2')">Section 2</button>
+    <button onclick="startSection('section3')">Section 3</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <h3 id="timer"></h3>
+    <h2 id="question"></h2>
+    <div id="options"></div>
+
+```
+<p id="feedback"></p>
+
+<button onclick="nextQuestion()">Next</button>
+<button onclick="skipQuestion()">Skip</button>
+```
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+
