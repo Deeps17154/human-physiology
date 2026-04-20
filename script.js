@@ -412,10 +412,10 @@ section8: [
 let current = [];
 let index = 0;
 let score = 0;
-let wrong = [];
 let time = 3600;
 let timer;
 
+// 🔀 Shuffle
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -424,78 +424,83 @@ function shuffle(arr) {
   return arr;
 }
 
+// ▶ Start section
 function startSection(name) {
-current = JSON.parse(JSON.stringify(sections[name]));
-current.forEach(q => q.options = shuffle(q.options));
+  current = JSON.parse(JSON.stringify(sections[name]));
+  current.forEach(q => q.options = shuffle(q.options));
 
-index = 0;
-score = 0;
-wrong = [];
-time = 3600;
+  index = 0;
+  score = 0;
+  time = 3600;
 
-document.getElementById("menu").classList.add("hidden");
-document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
 
-startTimer();
-loadQuestion();
+  startTimer();
+  loadQuestion();
 }
 
+// 📌 Load question
 function loadQuestion() {
-if (index >= current.length) {
-finishSection();
-return;
+  if (index >= current.length) {
+    finishSection();
+    return;
+  }
+
+  let q = current[index];
+
+  // ✅ Numbering added
+  document.getElementById("question").innerText =
+    "Q" + (index + 1) + ". " + q.q;
+
+  document.getElementById("feedback").innerText = "";
+
+  let optDiv = document.getElementById("options");
+  optDiv.innerHTML = "";
+
+  q.options.forEach(opt => {
+    let btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = () => checkAnswer(opt);
+    optDiv.appendChild(btn);
+  });
 }
 
-let q = current[index];
-document.getElementById("question").innerText = q.q;
-document.getElementById("feedback").innerText = "";
-
-let optDiv = document.getElementById("options");
-optDiv.innerHTML = "";
-
-q.options.forEach(opt => {
-let btn = document.createElement("button");
-btn.innerText = opt;
-btn.onclick = () => checkAnswer(opt);
-optDiv.appendChild(btn);
-});
-}
-
+// ✅ Check answer
 function checkAnswer(selected) {
-let correct = current[index].answer;
-let feedback = document.getElementById("feedback");
+  let correctAns = current[index].answer;
+  let feedback = document.getElementById("feedback");
 
-if (selected === correct) {
-score += 4;
-feedback.innerText = "Correct!";
-feedback.className = "correct";
-} else {
-score -= 1;
-wrong.push(current[index]);
-feedback.innerText = "Wrong! Correct: " + correct;
-feedback.className = "wrong";
+  if (selected === correctAns) {
+    score += 4;
+    feedback.innerText = "Correct!";
+    feedback.className = "correct";
+  } else {
+    score -= 1;
+    feedback.innerText = "Wrong! Correct: " + correctAns;
+    feedback.className = "wrong";
+  }
+
+  document.querySelectorAll("#options button").forEach(b => b.disabled = true);
 }
 
-document.querySelectorAll("#options button").forEach(b => b.disabled = true);
-}
-
+// ➡ Next
 function nextQuestion() {
-index++;
-loadQuestion();
+  index++;
+  loadQuestion();
 }
 
+// ⏭ Skip (NO repetition now)
 function skipQuestion() {
-wrong.push(current[index]);
-index++;
-loadQuestion();
+  index++;
+  loadQuestion();
 }
 
+// 🏁 Finish section
 function finishSection() {
   clearInterval(timer);
 
   let total = current.length;
-
-  // calculate correct answers (+4, -1 system)
   let correct = Math.round((score + total) / 5);
   let incorrect = total - correct;
 
@@ -508,19 +513,22 @@ function finishSection() {
     "<button onclick='location.reload()'>Back to Menu</button>";
 }
 
-  // 📊 Calculate results
-  let total = current.length;
-  let correct = Math.floor((score + total) / 5); 
-  // (+4 correct, -1 wrong logic reversed)
+// ⏱ Timer (fixed)
+function startTimer() {
+  clearInterval(timer);
 
-  let incorrect = total - correct;
+  timer = setInterval(() => {
+    time--;
 
-  // 🟢 Display result
-  document.getElementById("quiz").innerHTML =
-    "<h2>Section Completed ✅</h2>" +
-    "<h3>Score: " + score + "</h3>" +
-    "<p>Total Questions: " + total + "</p>" +
-    "<p>Correct Answers: " + correct + "</p>" +
-    "<p>Wrong Answers: " + incorrect + "</p>" +
-    "<br><button onclick='location.reload()'>Back to Menu</button>";
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    document.getElementById("timer").innerText =
+      "Time: " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+    if (time <= 0) {
+      clearInterval(timer);
+      finishSection();
+    }
+  }, 1000);
 }
