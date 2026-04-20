@@ -412,10 +412,12 @@ section8: [
 let current = [];
 let index = 0;
 let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
 let time = 3600;
 let timer;
 
-// 🔀 Shuffle
+// 🔀 Shuffle (Fisher-Yates)
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -424,13 +426,15 @@ function shuffle(arr) {
   return arr;
 }
 
-// ▶ Start section
+// ▶ Start Section
 function startSection(name) {
   current = JSON.parse(JSON.stringify(sections[name]));
   current.forEach(q => q.options = shuffle(q.options));
 
   index = 0;
   score = 0;
+  correctCount = 0;
+  wrongCount = 0;
   time = 3600;
 
   document.getElementById("menu").classList.add("hidden");
@@ -440,7 +444,7 @@ function startSection(name) {
   loadQuestion();
 }
 
-// 📌 Load question
+// 📌 Load Question
 function loadQuestion() {
   if (index >= current.length) {
     finishSection();
@@ -449,11 +453,15 @@ function loadQuestion() {
 
   let q = current[index];
 
-  // ✅ Numbering added
+  // ✅ Question + numbering
   document.getElementById("question").innerText =
-    "Q" + (index + 1) + ". " + q.q;
+    "Q" + (index + 1) + "/" + current.length + " : " + q.q;
 
   document.getElementById("feedback").innerText = "";
+
+  // ✅ Progress bar
+  let progress = ((index + 1) / current.length) * 100;
+  document.getElementById("progressBar").style.width = progress + "%";
 
   let optDiv = document.getElementById("options");
   optDiv.innerHTML = "";
@@ -466,54 +474,55 @@ function loadQuestion() {
   });
 }
 
-// ✅ Check answer
+// ✅ Check Answer (AUTO NEXT)
 function checkAnswer(selected) {
   let correctAns = current[index].answer;
   let feedback = document.getElementById("feedback");
 
   if (selected === correctAns) {
     score += 4;
+    correctCount++;
     feedback.innerText = "Correct!";
     feedback.className = "correct";
   } else {
     score -= 1;
+    wrongCount++;
     feedback.innerText = "Wrong! Correct: " + correctAns;
     feedback.className = "wrong";
   }
 
+  // disable buttons
   document.querySelectorAll("#options button").forEach(b => b.disabled = true);
+
+  // ✅ AUTO NEXT
+  setTimeout(() => {
+    index++;
+    loadQuestion();
+  }, 800);
 }
 
-// ➡ Next
-function nextQuestion() {
-  index++;
-  loadQuestion();
-}
-
-// ⏭ Skip (NO repetition now)
+// ⏭ Skip (no repeat)
 function skipQuestion() {
   index++;
   loadQuestion();
 }
 
-// 🏁 Finish section
+// 🏁 Finish Section
 function finishSection() {
   clearInterval(timer);
 
   let total = current.length;
-  let correct = Math.round((score + total) / 5);
-  let incorrect = total - correct;
 
   document.getElementById("quiz").innerHTML =
     "<h2>Section Completed ✅</h2>" +
     "<h3>Score: " + score + "</h3>" +
     "<p>Total Questions: " + total + "</p>" +
-    "<p>Correct Answers: " + correct + "</p>" +
-    "<p>Wrong Answers: " + incorrect + "</p>" +
+    "<p>Correct Answers: " + correctCount + "</p>" +
+    "<p>Wrong Answers: " + wrongCount + "</p>" +
     "<button onclick='location.reload()'>Back to Menu</button>";
 }
 
-// ⏱ Timer (fixed)
+// ⏱ Timer (stable)
 function startTimer() {
   clearInterval(timer);
 
