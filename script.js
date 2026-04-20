@@ -493,15 +493,20 @@ loadQuestion();
 function finishSection() {
   clearInterval(timer);
 
-  // 🔁 Repeat wrong questions first
-  if (wrong.length > 0) {
-    current = wrong;
-    wrong = [];
-    index = 0;
-    alert("Repeating wrong questions...");
-    loadQuestion();
-    return;
-  }
+  let total = current.length;
+
+  // calculate correct answers (+4, -1 system)
+  let correct = Math.round((score + total) / 5);
+  let incorrect = total - correct;
+
+  document.getElementById("quiz").innerHTML =
+    "<h2>Section Completed ✅</h2>" +
+    "<h3>Score: " + score + "</h3>" +
+    "<p>Total Questions: " + total + "</p>" +
+    "<p>Correct Answers: " + correct + "</p>" +
+    "<p>Wrong Answers: " + incorrect + "</p>" +
+    "<button onclick='location.reload()'>Back to Menu</button>";
+}
 
   // 📊 Calculate results
   let total = current.length;
