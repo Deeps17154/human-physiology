@@ -1,39 +1,55 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-  <title>Quiz App</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Biology Quiz</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    .hidden { display: none; }
+    button { margin: 5px; padding: 10px 15px; }
+    .correct { color: green; }
+    .wrong { color: red; }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
+<h1>Biology Quiz 🧠</h1>
 
-  <div id="menu">
-    <h2>Select Section</h2>
-    <button onclick="startSection('section1')">Section 1</button>
-    <button onclick="startSection('section2')">Section 2</button>
-    <button onclick="startSection('section3')">Section 3</button>
-  </div>
+<!-- ================= MENU ================= -->
+<div id="menu">
+  <h2>Select Section</h2>
 
-  <div id="quiz" class="hidden">
-    <h3 id="timer"></h3>
-    <h2 id="question"></h2>
-    <div id="options"></div>
-
-```
-<p id="feedback"></p>
-
-<button onclick="nextQuestion()">Next</button>
-<button onclick="skipQuestion()">Skip</button>
-```
-
-  </div>
+  <button onclick="startSection('section1')">Section 1</button>
+  <button onclick="startSection('section2')">Section 2</button>
+  <button onclick="startSection('section3')">Section 3</button>
+  <button onclick="startSection('section4')">Section 4</button>
+  <button onclick="startSection('section5')">Section 5</button>
+  <button onclick="startSection('section6')">Section 6</button>
+  <button onclick="startSection('section7')">Section 7</button>
+  <button onclick="startSection('section8')">Section 8</button>
 
 </div>
 
+<!-- ================= QUIZ ================= -->
+<div id="quiz" class="hidden">
+
+  <h2 id="timer">Time: 60:00</h2>
+
+  <h3 id="question"></h3>
+
+  <div id="options"></div>
+
+  <p id="feedback"></p>
+
+  <br>
+
+  <button onclick="nextQuestion()">Next</button>
+  <button onclick="skipQuestion()">Skip</button>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
 <script src="script.js"></script>
 
 </body>
 </html>
-
